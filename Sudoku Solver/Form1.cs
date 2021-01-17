@@ -17,6 +17,8 @@ namespace Sudoku_Solver
 {
     public partial class Form1 : Form
     {
+        bool refresh = false;
+
         List<int[]> tiles = new List<int[]>();
 
         public Form1()
@@ -38,6 +40,8 @@ namespace Sudoku_Solver
 
         private void startButton_Click(object sender, EventArgs e)
         {
+            refresh = refreshBox.Checked;
+
             //checks that inputs are valid
             foreach (DataGridViewRow row in board.Rows)
             {
@@ -70,6 +74,8 @@ namespace Sudoku_Solver
             }
 
             startButton.Hide();
+            FileButton.Hide();
+            refreshBox.Hide();
 
             //populate the tiles list
             foreach (DataGridViewRow row in board.Rows)
@@ -79,36 +85,40 @@ namespace Sudoku_Solver
                     if (cell.Value.ToString() != "0")
                     {
                         tiles.Add(new int[] { cell.ColumnIndex, row.Index });
+                        cell.Style.BackColor = Color.LightBlue;
                     }
                 }
             }
 
+            board.Refresh();
+
             bool worked = false;
+            int x = 0;
+            int y = 0;
             //TODO fix backtracking
             //iterate through y axis (rows)
-            for (int y = 0; y < 9; y++)
+            for (y = 0; y < 9; y++)
             {
                 //iterate through x axis (cells)
-                for (int x = 0; x < 9; x++)
+                for (x = 0; x < 9; x++)
                 {
+                    //reset bool
+                    worked = false;
+
+                    //check to see if cell can be changed
+                    if (protect(x, y))
+                    {
+                        continue;
+                    }
                     //check 1-9 for the cell
                     for (int i = 1; i <= 9; i++)
                     {
-                        //reset bool
-                        worked = false;
-
-                        //check to see if cell can be changed
-                        if (protect(x,y))
-                        {
-                            worked = true;
-                            break;
-                        }
-
                         //increment number and refresh board
                         board.Rows[y].Cells[x].Value = i;
-                        board.EndEdit();
-                        board.Refresh();
-
+                        if (refresh)
+                        {
+                            board.Refresh();
+                        }
                         //check to see if the change is viable in its row, column, and square
                         if (checkRow(board.Rows[y].Cells[x]) && checkColumn(board.Rows[y].Cells[x]) && checkSquare(board.Rows[y].Cells[x]))
                         {
@@ -125,30 +135,89 @@ namespace Sudoku_Solver
 
                     //if all 1-9 dont work, backtrack
                     board.Rows[y].Cells[x].Value = 0;
-                    if (x - 2 < -1)
-                    {
-                        x = 7;
-                        if (y - 2 < -1)
-                        {
-                            y = 0;
-                        }
-                        else
-                        {
-                            y -= 2;
-                        }
-                    }
-                    else
-                    {
-                        x -= 2;
-                    }
-
+                    int[] coords = backtrack(x, y);
+                    x = coords[0];
+                    y = coords[1];
 
                 }
             }
 
         }
 
-        //paints the black lines to divide the board into 9 squares
+        public int[] backtrack(int x, int y)
+        {
+            //marked true when return time
+            bool done = false;
+
+            //loop through previous cells
+            do
+            {
+                //checks if going back 1 space wont go out of bounds, otherwise it goes to index 7
+                if (x - 1 < 0)
+                {
+                    x = 8;
+                    //takes the row back one. if its out of bounds, messagebox error (1st box has been maxed out)
+                    if (y - 1 < 0)
+                    {
+                        board.Refresh();
+                        MessageBox.Show("ERROR backtrack(): backtracked too far");
+                    }
+                    else
+                    {
+                        y --;
+                    }
+                }
+                else
+                {
+                    x --;
+                }
+
+                //if the cell can be changed
+                if (!protect(x,y))
+                {
+                    //if the cell isnt maxxed to 9
+                    if (int.Parse(board.Rows[y].Cells[x].Value.ToString()) < 9)
+                    {
+                        //iterates through the numbers from (the num already in the cell - 9)
+                        for (int i = int.Parse(board.Rows[y].Cells[x].Value.ToString()) + 1; i <= 9; i++)
+                        {
+                            board.Rows[y].Cells[x].Value = i;
+                            if (refresh)
+                            {
+                                board.Refresh();
+                            }
+                            //checks too see if the change is valid
+                            if (checkRow(board.Rows[y].Cells[x]) && checkColumn(board.Rows[y].Cells[x]) && checkSquare(board.Rows[y].Cells[x]))
+                            {
+                                done = true;
+                                break;
+                            }
+                        }
+                        if (!done)
+                        {
+                            board.Rows[y].Cells[x].Value = 0;
+                            if (refresh)
+                            {
+                                board.Refresh();
+                            }
+                        }
+                    }
+                    //sets to zero and continue backtracking
+                    else
+                    {
+                        board.Rows[y].Cells[x].Value = 0;
+                        if (refresh)
+                        {
+                            board.Refresh();
+                        }
+                    }
+                }
+            } 
+            while (!done);
+
+            return new int[] { x, y };
+            
+        }
 
         public bool checkRow(DataGridViewCell cell)
         {
@@ -218,23 +287,27 @@ namespace Sudoku_Solver
                 MessageBox.Show("checkColumn Error. nums list does not contain 9 numbers");
             }
 
+            int num1IDX = 0;
             foreach (int num1 in nums)
             {
-                if (num1 == -1)
+                if (num1 == 0)
                 {
                     continue;
                 }
+                int num2IDX = 0;
                 foreach (int num2 in nums)
                 {
-                    if (num2 == -1)
+                    if (num2 == 0)
                     {
                         continue;
                     }
-                    if (nums.IndexOf(num1) != nums.IndexOf(num2) && num1 == num2)
+                    if (num1IDX != num2IDX && num1 == num2)
                     {
                         return false;
                     }
+                    num2IDX++;
                 }
+                num1IDX++;
             }
 
             return true;
@@ -398,6 +471,7 @@ namespace Sudoku_Solver
             return false;
         }
 
+        //paints the black lines to divide the board into 9 squares
         private void board_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
             //Using red pen to draw border  

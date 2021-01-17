@@ -43,6 +43,7 @@
             this.startButton = new System.Windows.Forms.Button();
             this.FileButton = new System.Windows.Forms.Button();
             this.files = new System.Windows.Forms.OpenFileDialog();
+            this.refreshBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.board)).BeginInit();
             this.SuspendLayout();
             // 
@@ -198,11 +199,22 @@
             this.files.InitialDirectory = "C:\\Users\\email\\Desktop\\";
             this.files.Title = "Select a file with a preloaded problem (Excel only)";
             // 
+            // refreshBox
+            // 
+            this.refreshBox.AutoSize = true;
+            this.refreshBox.Location = new System.Drawing.Point(9, 695);
+            this.refreshBox.Name = "refreshBox";
+            this.refreshBox.Size = new System.Drawing.Size(220, 21);
+            this.refreshBox.TabIndex = 24;
+            this.refreshBox.Text = "View Algorithm during process";
+            this.refreshBox.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(626, 728);
+            this.Controls.Add(this.refreshBox);
             this.Controls.Add(this.FileButton);
             this.Controls.Add(this.startButton);
             this.Controls.Add(this.initalLabel);
@@ -234,6 +246,7 @@
         private System.Windows.Forms.Button startButton;
         private System.Windows.Forms.Button FileButton;
         private System.Windows.Forms.OpenFileDialog files;
+        private System.Windows.Forms.CheckBox refreshBox;
     }
 }
 
