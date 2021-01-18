@@ -4,5 +4,13 @@ Automatically solves sudoku puzzles using the brute force method with the order 
 Allows you to load in excel files with preloaded puzzles for quicker solving
 Toggle the checkbox in the bottom left to watch the algorithm solve the puzzle in in real time
 
+Excel:
+All blank cells should be zero
+Only cells in columns A-I and rows 1-9 should be filled
+Cells with numbers that cannot be changed should be filled
+
+Here is a link to an example of what the excel file should look like if you want to load in puzzles
+https://www.dropbox.com/s/hssmezdtcid7md2/Sudoku.xlsx?dl=0 
+
 Here is the Download Link to the Program
 https://www.dropbox.com/s/opug52v5bh79kl6/Sudoku%20Solver.zip?dl=0 
