@@ -1,0 +1,8 @@
+Sudoku Solver
+
+Automatically solves sudoku puzzles using the brute force method with the order (123456789)
+Allows you to load in excel files with preloaded puzzles for quicker solving
+Toggle the checkbox in the bottom left to watch the algorithm solve the puzzle in in real time
+
+Here is the Download Link to the Program
+https://www.dropbox.com/s/opug52v5bh79kl6/Sudoku%20Solver.zip?dl=0 
