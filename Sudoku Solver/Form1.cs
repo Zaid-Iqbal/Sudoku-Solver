@@ -53,7 +53,7 @@ namespace Sudoku_Solver
                         MessageBox.Show("Make sure only one number is written in a cell");
                         return;
                     }
-                    else if (!int.TryParse(cell.Value.ToString(), out num))
+                    else if (cell.Value != null && !int.TryParse(cell.Value.ToString(), out num))
                     {
                         MessageBox.Show("Make sure only numbers are in written in a box. No extra charecters");
                         return;
